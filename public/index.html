@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Speech To Text & Sign Language Learning Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="bg-orbs"><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div></div>
+<div class="particles" id="particles"></div>
+
+<!-- Login Overlay -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-container">
+    <div class="login-brand">
+      <i class="ti ti-wave-sine"></i>
+      <h1>Speech Sign Platform</h1>
+      <p>Platform pembelajaran bahasa isyarat inklusif</p>
+    </div>
+    <form id="loginForm">
+      <label class="field">
+        <span>Email</span>
+        <input type="email" class="input" id="loginEmail" required placeholder="email@contoh.com">
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input type="password" class="input" id="loginPassword" required placeholder="••••••••">
+      </label>
+      <button type="submit" class="btn primary" style="width: 100%; margin-top: 10px;">
+        <i class="ti ti-login"></i> Masuk
+      </button>
+      <div class="login-footer">
+        <p>Belum punya akun? <a href="#" id="switchToRegister">Daftar</a></p>
+      </div>
+    </form>
+    <form id="registerForm" style="display: none;">
+      <label class="field">
+        <span>Nama Lengkap</span>
+        <input type="text" class="input" id="registerName" required placeholder="Nama Anda">
+      </label>
+      <label class="field">
+        <span>Email</span>
+        <input type="email" class="input" id="registerEmail" required placeholder="email@contoh.com">
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input type="password" class="input" id="registerPassword" required placeholder="••••••••">
+      </label>
+      <button type="submit" class="btn primary" style="width: 100%; margin-top: 10px;">
+        <i class="ti ti-user-plus"></i> Daftar
+      </button>
+      <div class="login-footer">
+        <p>Sudah punya akun? <a href="#" id="switchToLogin">Masuk</a></p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="app">
+  <!-- Trae AI Banner -->
+  <div class="trae-banner">
+    <i class="ti ti-sparkles"></i>
+    <span><strong>Trae AI Enhancement:</strong> Fitur Mode Kamera sedang disempurnakan untuk deteksi isyarat BISINDO real-time!</span>
+  </div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo"><i class="ti ti-wave-sine"></i></div>
+      <div class="brand-name">Speech To Text AI<span>Sign Language Platform</span></div>
+    </div>
+    <nav class="nav">
+      <a class="nav-item active" data-page="dashboard"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+      <a class="nav-item" data-page="speech"><i class="ti ti-microphone"></i> Mode Suara</a>
+      <a class="nav-item" data-page="camera"><i class="ti ti-camera"></i> Mode Kamera</a>
+      <a class="nav-item" data-page="learn"><i class="ti ti-school"></i> Belajar Isyarat</a>
+
+      <a class="nav-item" data-page="tts"><i class="ti ti-volume"></i> Text To Speech</a>
+      <a class="nav-item" data-page="history"><i class="ti ti-history"></i> Riwayat</a>
+      <a class="nav-item" data-page="settings"><i class="ti ti-settings"></i> Pengaturan</a>
+    </nav>
+    <div class="nav-foot">
+      <div class="user-card" onclick="openLoginModal()">
+        <div class="user-avatar" id="userAvatar">G</div>
+        <div class="user-info">
+          <b id="userName">Guest User</b>
+          <small><span class="login-dot" id="loginDot"></span><span id="userStatus">Klik untuk Login</span></small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <nav class="bottom-nav">
+    <a class="nav-item active" data-page="dashboard"><i class="ti ti-layout-dashboard"></i></a>
+    <a class="nav-item" data-page="speech"><i class="ti ti-microphone"></i></a>
+    <a class="nav-item" data-page="camera"><i class="ti ti-camera"></i></a>
+    <a class="nav-item" data-page="learn"><i class="ti ti-school"></i></a>
+
+  </nav>
+
+  <main class="main">
+    <div class="topbar">
+      <button class="btn sm menu-toggle" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i> Menu</button>
+      <h1 id="pageTitle">Dashboard</h1>
+    </div>
+
+    <section class="page active" id="page-dashboard">
+      <div class="hero glass">
+        <h2>Welcome Back 👋 <span class="grad-text">Speech & Sign Platform</span></h2>
+        <p>Platform AI inklusif menjembatani komunikasi melalui Speech-to-Text & edukasi Bahasa Isyarat.</p>
+      </div>
+      <div class="grid cols-1">
+        <div class="glass stat"><div class="stat-label">Total Transkripsi</div><div class="stat-value" id="statTrans">0</div></div>
+      </div>
+      <h3 style="margin:24px 0 12px">Pintasan Cepat</h3>
+      <div class="grid cols-3">
+        <div class="glass quick" onclick="go('speech')"><div class="quick-icon"><i class="ti ti-microphone"></i></div><h3>Mode Suara</h3><p>Konversi ucapan ke teks</p></div>
+        <div class="quick glass" onclick="go('camera')"><div class="quick-icon"><i class="ti ti-camera"></i></div><h3>Mode Kamera</h3><p>Deteksi isyarat AI</p></div>
+        <div class="glass quick" onclick="go('learn')"><div class="quick-icon"><i class="ti ti-school"></i></div><h3>Belajar Isyarat</h3><p>Modul SIBI & BISINDO</p></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-speech">
+      <div class="grid cols-2">
+        <div class="glass card" style="text-align:center">
+          <button class="mic" id="micBtn"><i class="ti ti-microphone"></i></button>
+          <p style="margin-top:14px" id="micStatus">Klik mic untuk berbicara</p>
+          <select class="select" id="speechLang" style="margin-top:20px"><option value="id-ID">🇮🇩 Indonesia</option><option value="en-US">🇺🇸 English</option></select>
+        </div>
+        <div class="glass card">
+          <h3>Live Transcript</h3>
+          <div class="transcript empty" id="speechOut" style="margin:14px 0">Hasil suara akan muncul di sini...</div>
+          <button class="btn primary" onclick="saveToHistory('speech', speechOut.innerText)">Simpan ke Riwayat</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-camera">
+      <div class="grid cols-2">
+        <div class="glass card">
+          <div class="cam-stage empty" id="camBox">
+            <video id="webcam" autoplay playsinline style="display:none"></video>
+            <canvas id="handCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
+            <p id="camTxt">Kamera Mati</p>
+            <div class="cam-overlay" id="camOverlay" style="display:none">
+              <div class="hud">
+                <div class="chip"><i class="ti ti-hand-stop"></i> <span id="hudFps">FPS: --</span></div>
+                <div class="chip"><i class="ti ti-cpu"></i> <span id="hudModel">Model: MediaPipe Hands v0.4</span></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:14px"><button class="btn primary" id="btnCamStart">Nyala</button><button class="btn danger" id="btnCamStop">Mati</button></div>
+        </div>
+        <div class="glass card">
+          <h3>Deteksi AI</h3>
+          <div class="sign-result empty" id="aiResult" style="margin:14px 0">Arahkan isyarat tangan ke kamera</div>
+          
+          <!-- Detail Panel -->
+          <div id="signDetailPanel" style="display:none;margin-top:14px;padding:16px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--border);">
+            <img id="detailPanelImg" src="" alt="Sign" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:1px solid var(--border);margin-bottom:12px;">
+            <h4 id="detailPanelTitle" style="font-size:16px;font-weight:700;margin-bottom:6px;"></h4>
+            <p id="detailPanelInstruction" style="color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:8px;"></p>
+            <small id="detailPanelMnemonic" style="color:var(--dim);font-size:12px;"></small>
+          </div>
+          
+          <button class="btn primary" onclick="saveToHistory('camera', document.getElementById('aiResult').innerText)">Simpan Hasil Isyarat</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-learn">
+      <div class="hero glass"><h2>Modul Alfabet SIBI & BISINDO</h2><p>Klik kartu untuk mempelajari instruksi gerak.</p></div>
+      <div class="sign-grid" id="learnGrid"></div>
+    </section>
+
+
+
+    <section class="page" id="page-tts">
+      <div class="glass card">
+        <label class="field"><span>Ketik Teks untuk Disuarakan</span><textarea class="input" id="ttsTxt" rows="4">Halo, selamat datang di platform inklusif.</textarea></label>
+        <div class="slider-row" style="margin-top:20px"><label>Kecepatan</label><input type="range" id="ttsRate" min="0.5" max="2" step="0.1" value="1"></div>
+        <div class="slider-row"><label>Pitch</label><input type="range" id="ttsPitch" min="0" max="2" step="0.1" value="1"></div>
+        <button class="btn primary" onclick="playTTS()"><i class="ti ti-volume"></i> Putar Suara Robot</button>
+      </div>
+    </section>
+
+    <section class="page" id="page-history">
+      <div class="grid cols-1" id="historyFeed"></div>
+    </section>
+
+    <section class="page" id="page-settings">
+      <div class="glass card">
+        <div class="settings-tabs">
+          <button class="settings-tab active" data-tab="profile">Profil User</button>
+          <button class="settings-tab" data-tab="display">Preferensi Tampilan</button>
+          <button class="settings-tab" data-tab="camera">Kamera & Suara</button>
+          <button class="settings-tab" data-tab="security">Keamanan</button>
+        </div>
+
+        <div class="settings-content">
+          <!-- Tab: Profil User -->
+          <div class="settings-panel active" id="panel-profile">
+            <h4>Profil User</h4>
+            <label class="field">
+              <span>Nama Pengguna</span>
+              <input type="text" class="input" id="settingsName" placeholder="Nama Lengkap">
+            </label>
+            <label class="field">
+              <span>Email</span>
+              <input type="email" class="input" id="settingsEmail" placeholder="email@domain.com">
+            </label>
+          </div>
+
+          <!-- Tab: Preferensi Tampilan -->
+          <div class="settings-panel" id="panel-display">
+            <h4>Preferensi Tampilan</h4>
+            <div class="toggle-row">
+              <span>Dark Mode</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="settingsDarkMode">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <label class="field">
+              <span>Ukuran Teks</span>
+              <select class="select" id="settingsFontSize">
+                <option value="small">Kecil</option>
+                <option value="normal" selected>Normal</option>
+                <option value="large">Besar</option>
+                <option value="xlarge">Sangat Besar</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Pilih Tema</span>
+              <select class="select" id="themeSel" onchange="changeTheme(this.value)">
+                <option value="">Dark Slate</option>
+                <option value="theme-purple">Dark Purple</option>
+                <option value="theme-blue">Dark Blue</option>
+              </select>
+            </label>
+          </div>
+
+          <!-- Tab: Kamera & Suara -->
+          <div class="settings-panel" id="panel-camera">
+            <h4>Kamera & Suara</h4>
+            <label class="field">
+              <span>Pilih Perangkat Kamera</span>
+              <select class="select" id="settingsCamera">
+                <option value="">Memuat perangkat...</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Pilih Perangkat Mikrofon</span>
+              <select class="select" id="settingsMic">
+                <option value="">Memuat perangkat...</option>
+              </select>
+            </label>
+            <div class="toggle-row">
+              <span>Sensitivitas Deteksi Gerakan Tinggi</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="settingsSensitivity">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Tab: Keamanan -->
+          <div class="settings-panel" id="panel-security">
+            <h4>Keamanan</h4>
+            <label class="field">
+              <span>Password Lama</span>
+              <input type="password" class="input" id="settingsOldPass" placeholder="••••••••">
+            </label>
+            <label class="field">
+              <span>Password Baru</span>
+              <input type="password" class="input" id="settingsNewPass" placeholder="••••••••">
+            </label>
+            <label class="field">
+              <span>Konfirmasi Password Baru</span>
+              <input type="password" class="input" id="settingsConfirmPass" placeholder="••••••••">
+            </label>
+            <button class="btn primary" onclick="changePassword()" style="margin-top:10px">Ganti Password</button>
+            <hr style="margin:24px 0;border-color:var(--border-color);">
+            <button class="btn danger" onclick="logout()">Logout</button>
+          </div>
+        </div>
+
+        <div class="settings-footer">
+          <button class="btn secondary" onclick="resetSettings()">Reset</button>
+          <button class="btn primary" id="saveSettingsBtn" disabled onclick="saveSettings()">Simpan Perubahan</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="modal-bd" id="authModal">
+  <div class="modal">
+    <h2 id="mTitle">Masuk Sistem</h2>
+    <form id="authForm" style="margin-top:14px">
+      <input type="text" class="input" id="authName" placeholder="Nama Lengkap" style="display:none;margin-bottom:10px;">
+      <input type="email" class="input" id="authEmail" required placeholder="email@domain.com" style="margin-bottom:10px;">
+      <input type="password" class="input" id="authPass" required placeholder="••••••••" style="margin-bottom:14px;">
+      <button type="submit" class="btn primary" style="width:100%">Submit</button>
+    </form>
+    <button class="btn ghost sm" onclick="toggleAuthMode()" style="margin-top:10px;width:100%" id="switchAuthBtn">Belum punya akun? Daftar</button>
+  </div>
+</div>
+
+<div class="modal-bd" id="signDetailModal">
+  <div class="modal sign-detail-modal">
+    <button class="btn ghost sm close-btn" onclick="closeSignDetailModal()"><i class="ti ti-x"></i></button>
+    <div id="signDetailContent"></div>
+  </div>
+</div>
+<div class="toasts" id="toasts"></div>
+<script src="/js/app.js"></script>
+</body>
+</html>
