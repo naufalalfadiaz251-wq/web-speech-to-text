@@ -27,26 +27,6 @@ body{
   padding-top:44px;
 }
 
-/* Trae AI Banner */
-.trae-banner{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:100;
-  background:linear-gradient(135deg,rgba(99,102,241,.2),rgba(56,189,248,.15));
-  border-bottom:1px solid rgba(99,102,241,.3);
-  padding:10px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-}
-.trae-banner i{font-size:20px;color:var(--sky)}
-.trae-banner span{font-size:13px;color:var(--text);text-align:center}
-.trae-banner span strong{color:var(--indigo)}
 /* Theme variants */
 body.theme-purple{--bg-0:#0b0420;--bg-1:#180a3a;--bg-2:#1f0f4a}
 body.theme-blue{--bg-0:#02101f;--bg-1:#0a2540;--bg-2:#103a66}

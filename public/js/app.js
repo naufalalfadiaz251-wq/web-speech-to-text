@@ -629,7 +629,7 @@ function drawBoundingBox(ctx, bbox, label) {
 
 async function classifyGesture(landmarks) {
   // Daftar gesture SIBI yang didukung
-  const sibiLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'R', 'S', 'U', 'V', 'W', 'Y', 'Halo'];
+  const sibiLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Halo'];
 
   // Logika deteksi sederhana (placeholder untuk model TensorFlow.js nanti)
   const fingers = [
@@ -689,9 +689,33 @@ async function classifyGesture(landmarks) {
   if (!up[0] && !up[1] && !up[2] && !up[3] && up[4]) {
     prediction.push({ className: 'I', probability: 0.90 });
   }
+  // J: Mirip I tapi dengan gerakan (untuk saat ini sama dengan I)
+  if (!up[0] && !up[1] && !up[2] && !up[3] && up[4]) {
+    prediction.push({ className: 'J', probability: 0.88 });
+  }
   // K: Jempol di antara telunjuk dan tengah, keduanya buat V
   if (up[1] && up[2] && !up[3] && !up[4] && distance(landmarks[4], landmarks[6]) < 0.12) {
     prediction.push({ className: 'K', probability: 0.83 });
+  }
+  // P: Mirip K tapi arah tangan ke bawah (placeholder)
+  if (up[1] && up[2] && !up[3] && !up[4] && distance(landmarks[4], landmarks[6]) < 0.12) {
+    prediction.push({ className: 'P', probability: 0.80 });
+  }
+  // Q: Mirip G tapi arah tangan ke bawah (placeholder)
+  if (up[0] && up[1] && !up[2] && !up[3] && !up[4]) {
+    prediction.push({ className: 'Q', probability: 0.80 });
+  }
+  // T: Jempol terselip di antara telunjuk dan tengah yang mengepal (placeholder)
+  if (!up[1] && !up[2] && !up[3] && !up[4]) {
+    prediction.push({ className: 'T', probability: 0.78 });
+  }
+  // X: Telunjuk menekuk seperti kail (placeholder)
+  if (!up[0] && !up[2] && !up[3] && !up[4] && distance(landmarks[8], landmarks[5]) < 0.10) {
+    prediction.push({ className: 'X', probability: 0.81 });
+  }
+  // Z: Mirip I tapi dengan gerakan (placeholder)
+  if (up[1] && !up[2] && !up[3] && !up[4]) {
+    prediction.push({ className: 'Z', probability: 0.80 });
   }
   // L: Telunjuk dan jempol buat sudut siku-siku
   if (up[0] && up[1] && !up[2] && !up[3] && !up[4]) {
@@ -819,26 +843,32 @@ function stopCam() {
 }
 
 const alphabetData = [
-  { id: 'A', instruction: 'Kepalan tangan tertutup, jempol tegak di samping jari telunjuk.', imagePrompt: 'SIBI sign language letter A, realistic hand showing fist with thumb beside index finger, neutral background, clear lighting', mnemonic: 'A seperti Apel yang bulat.' },
-  { id: 'B', instruction: 'Telapak tangan terbuka dengan empat jari rapat, jempol terlipat di depan telapak.', imagePrompt: 'SIBI sign language letter B, open palm with four fingers together, thumb tucked in front, realistic, neutral background', mnemonic: 'B seperti Bentuk papan terbuka.' },
-  { id: 'C', instruction: 'Tangan membentuk huruf C dengan ibu jari dan jari telunjuk.', imagePrompt: 'SIBI sign language letter C, hand forming a C shape with thumb and index finger, realistic, neutral background', mnemonic: 'C seperti Cangkir yang melengkung.' },
-  { id: 'D', instruction: 'Telunjuk tegak, jari tengah, manis, dan kelingking melingkar menyentuh jempol.', imagePrompt: 'SIBI sign language letter D, index finger up, other fingers curled touching thumb, realistic, neutral background', mnemonic: 'D seperti Dinding yang berdiri.' },
-  { id: 'E', instruction: 'Semua ujung jari menyentuh ibu jari (seperti mencubit).', imagePrompt: 'SIBI sign language letter E, all fingertips touching thumb, pinching shape, realistic, neutral background', mnemonic: 'E seperti Erat mencubit.' },
-  { id: 'F', instruction: 'Ujung telunjuk menyentuh ujung jempol, tiga jari lainnya tegak.', imagePrompt: 'SIBI sign language letter F, tip of index finger touching thumb tip, three other fingers spread up, realistic, neutral background', mnemonic: 'F seperti Fokus pada ujung jari.' },
-  { id: 'G', instruction: 'Tangan mengepal menyamping, jari telunjuk dan jempol sejajar.', imagePrompt: 'SIBI sign language letter G, fist sideways, index finger and thumb parallel, realistic, neutral background', mnemonic: 'G seperti Garis yang sejajar.' },
-  { id: 'H', instruction: 'Jari telunjuk dan jari tengah sejajar ke samping, jari lainnya mengepal.', imagePrompt: 'SIBI sign language letter H, index and middle fingers extended sideways, others curled, realistic, neutral background', mnemonic: 'H seperti Hari yang cerah.' },
-  { id: 'I', instruction: 'Jari kelingking tegak ke atas, jari lain mengepal.', imagePrompt: 'SIBI sign language letter I, pinky finger extended up, others curled, realistic, neutral background', mnemonic: 'I seperti Ikan kecil.' },
-  { id: 'K', instruction: 'Jempol di antara telunjuk dan jari tengah, telunjuk dan tengah tegak membentuk V.', imagePrompt: 'SIBI sign language letter K, thumb between index and middle fingers, index and middle fingers up, realistic, neutral background', mnemonic: 'K seperti Kaki yang berdiri.' },
-  { id: 'L', instruction: 'Jari telunjuk dan jempol membentuk sudut siku-siku (huruf L).', imagePrompt: 'SIBI sign language letter L, index finger and thumb forming a right angle, L shape, realistic, neutral background', mnemonic: 'L seperti Lurus membentuk sudut.' },
-  { id: 'M', instruction: 'Tiga jari (telunjuk, tengah, manis) melipat di atas jempol.', imagePrompt: 'SIBI sign language letter M, three fingers curled over the thumb, realistic, neutral background', mnemonic: 'M seperti Menutup jempol.' },
-  { id: 'N', instruction: 'Dua jari (telunjuk, tengah) melipat di atas jempol.', imagePrompt: 'SIBI sign language letter N, two fingers curled over the thumb, realistic, neutral background', mnemonic: 'N seperti Nyaman melipat jari.' },
-  { id: 'O', instruction: 'Semua jari melengkung membentuk lingkaran (huruf O).', imagePrompt: 'SIBI sign language letter O, all fingers curved forming a perfect circle, realistic, neutral background', mnemonic: 'O seperti Objek lingkaran.' },
-  { id: 'R', instruction: 'Jari telunjuk dan jari tengah saling menyilang.', imagePrompt: 'SIBI sign language letter R, index and middle fingers crossed over each other, realistic, neutral background', mnemonic: 'R seperti Rapat yang bersilang.' },
-  { id: 'S', instruction: 'Tangan mengepal dengan ibu jari di depan jari telunjuk.', imagePrompt: 'SIBI sign language letter S, fist with thumb in front of index finger, realistic, neutral background', mnemonic: 'S seperti Simpan tenaga dalam kepalan.' },
-  { id: 'U', instruction: 'Jari telunjuk dan tengah rapat tegak ke atas.', imagePrompt: 'SIBI sign language letter U, index and middle fingers held together pointing up, realistic, neutral background', mnemonic: 'U seperti Ujung jari ke atas.' },
-  { id: 'V', instruction: 'Jari telunjuk dan tengah membentuk huruf V.', imagePrompt: 'SIBI sign language letter V, index and middle fingers spread to form a V, realistic, neutral background', mnemonic: 'V seperti Victory dua jari.' },
-  { id: 'W', instruction: 'Jari telunjuk, tengah, dan manis tegak ke atas.', imagePrompt: 'SIBI sign language letter W, index middle and ring fingers held up spread, realistic, neutral background', mnemonic: 'W seperti Wajah jari tegak.' },
-  { id: 'Y', instruction: 'Jempol dan kelingking tegak ke samping.', imagePrompt: 'SIBI sign language letter Y, thumb and pinky finger extended, realistic, neutral background', mnemonic: 'Y seperti Yay semangat.' }
+  { id: 'A', instruction: 'Kepalan tangan tertutup, jempol tegak di sisi luar dekat jari telunjuk.', imagePrompt: 'Indonesian Sign Language BISINDO letter A, right hand, closed fist with thumb extended straight up beside index finger, front view, dark neutral background, clear lighting, professional photo', mnemonic: 'A seperti "Aman" dalam kepalan.' },
+  { id: 'B', instruction: 'Telapak tangan terbuka ke depan, keempat jari rapat lurus ke atas, jempol terlipat ke dalam menyentuh pangkal jari telunjuk.', imagePrompt: 'BISINDO sign language letter B, right hand, open palm facing forward, four fingers straight up together, thumb tucked into palm, front view, dark neutral background, clear lighting', mnemonic: 'B seperti "Buku" yang terbuka.' },
+  { id: 'C', instruction: 'Semua jari dan jempol melengkung membentuk huruf C, telapak tangan menghadap ke depan.', imagePrompt: 'BISINDO letter C, right hand forming a C shape with all fingers and thumb curved, palm facing forward, front view, dark neutral background', mnemonic: 'C seperti "Cangkir" yang bulat.' },
+  { id: 'D', instruction: 'Jari telunjuk tegak lurus ke atas, jari tengah, manis, kelingking melipat ke dalam, ujung jari-jari tersebut menyentuh ujung jempol yang juga melipat.', imagePrompt: 'BISINDO letter D, right hand index finger up, other fingertips touching thumb tip, forming D shape, front view', mnemonic: 'D seperti "Dinding" tegak.' },
+  { id: 'E', instruction: 'Keempat jari (telunjuk sampai kelingking) melipat ke dalam, ujungnya menyentuh telapak tangan, jempol melipat menutupi depan jari-jari tersebut.', imagePrompt: 'BISINDO letter E, right hand all fingers folded into palm, thumb covering front, front view', mnemonic: 'E seperti "Empat" jari tertutup.' },
+  { id: 'F', instruction: 'Ujung jari telunjuk dan jempol bersentuhan membentuk lingkaran kecil, jari tengah, manis, kelingking lurus tegak ke atas.', imagePrompt: 'BISINDO letter F, right hand index and thumb tips touching forming circle, other three fingers straight up, front view', mnemonic: 'F seperti "Fokus" pada lingkaran.' },
+  { id: 'G', instruction: 'Tangan mengepal, jari telunjuk dan jempol lurus ke samping (seperti menunjuk ke kiri/kanan), kedua jari tersebut sejajar.', imagePrompt: 'BISINDO letter G, right hand fist with index and thumb extended sideways parallel, front view', mnemonic: 'G seperti "Garis" lurus.' },
+  { id: 'H', instruction: 'Jari telunjuk dan tengah lurus ke samping (sejajar), jari manis, kelingking, dan jempol melipat ke dalam.', imagePrompt: 'BISINDO letter H, right hand index and middle fingers extended sideways together, others folded, front view', mnemonic: 'H seperti "Hari" yang cerah.' },
+  { id: 'I', instruction: 'Hanya jari kelingking yang lurus tegak ke atas, jari-jari lain dan jempol mengepal.', imagePrompt: 'BISINDO letter I, right hand pinky finger straight up, others in fist, front view', mnemonic: 'I seperti "Ikan" kecil.' },
+  { id: 'J', instruction: 'Seperti huruf I, lalu gerakkan kelingking ke bawah melengkung seperti menulis huruf J di udara.', imagePrompt: 'BISINDO letter J, right hand pinky extended then curving down in J motion, front view', mnemonic: 'J seperti "Jalan" melengkung.' },
+  { id: 'K', instruction: 'Jari telunjuk dan tengah lurus ke atas membentuk huruf V, jempol terselip di antara kedua jari tersebut.', imagePrompt: 'BISINDO letter K, right hand index and middle fingers up in V, thumb between them, front view', mnemonic: 'K seperti "Kaki" yang berdiri V.' },
+  { id: 'L', instruction: 'Jari telunjuk lurus ke atas, jempol lurus ke samping, membentuk sudut siku-siku (huruf L), jari-jari lain mengepal.', imagePrompt: 'BISINDO letter L, right hand index up and thumb out forming L shape, front view', mnemonic: 'L seperti "Lurus" sudut 90.' },
+  { id: 'M', instruction: 'Jempol dilipat ke dalam, tiga jari (telunjuk, tengah, manis) melipat di atas jempol, jari kelingking mengepal.', imagePrompt: 'BISINDO letter M, right hand thumb in, three fingers folded over thumb, front view', mnemonic: 'M seperti "Tiga" gunung.' },
+  { id: 'N', instruction: 'Jempol dilipat ke dalam, dua jari (telunjuk dan tengah) melipat di atas jempol, jari manis dan kelingking mengepal.', imagePrompt: 'BISINDO letter N, right hand thumb in, two fingers folded over thumb, front view', mnemonic: 'N seperti "Dua" gunung.' },
+  { id: 'O', instruction: 'Semua jari dan jempol melengkung membentuk lingkaran bulat sempurna, ujung jari-jari bertemu dengan ujung jempol.', imagePrompt: 'BISINDO letter O, right hand all fingers and thumb forming perfect circle, tips touching, front view', mnemonic: 'O seperti "Oren" bulat.' },
+  { id: 'P', instruction: 'Mirip huruf K, tapi tangan diarahkan ke bawah (menghadap lantai).', imagePrompt: 'BISINDO letter P, right hand in K shape but pointing downward, front view', mnemonic: 'P seperti "K terbalik" ke bawah.' },
+  { id: 'Q', instruction: 'Mirip huruf G, tapi tangan diarahkan ke bawah (menghadap lantai).', imagePrompt: 'BISINDO letter Q, right hand in G shape but pointing downward, front view', mnemonic: 'Q seperti "G terbalik" ke bawah.' },
+  { id: 'R', instruction: 'Jari telunjuk dan tengah bersilang di depan, jari-jari lain dan jempol mengepal.', imagePrompt: 'BISINDO letter R, right hand index and middle fingers crossed, front view', mnemonic: 'R seperti "Silang" jalan.' },
+  { id: 'S', instruction: 'Tangan mengepal penuh, jempol melipat di depan menutupi jari telunjuk dan tengah.', imagePrompt: 'BISINDO letter S, right hand tight fist, thumb over index and middle, front view', mnemonic: 'S seperti "Simpan" dalam kepalan.' },
+  { id: 'T', instruction: 'Jari telunjuk mengepal, jempol terselip di antara jari telunjuk dan tengah yang juga mengepal.', imagePrompt: 'BISINDO letter T, right hand thumb tucked between index and middle fingers, front view', mnemonic: 'T seperti "Tersembunyi" di antara jari.' },
+  { id: 'U', instruction: 'Jari telunjuk dan tengah lurus ke atas dan rapat bersama, jari-jari lain dan jempol mengepal.', imagePrompt: 'BISINDO letter U, right hand index and middle fingers straight up together, front view', mnemonic: 'U seperti "Dua" jari rapat.' },
+  { id: 'V', instruction: 'Jari telunjuk dan tengah lurus ke atas dan terbuka membentuk huruf V, jari-jari lain dan jempol mengepal.', imagePrompt: 'BISINDO letter V, right hand index and middle fingers spread in V shape, front view', mnemonic: 'V seperti "Victory".' },
+  { id: 'W', instruction: 'Jari telunjuk, tengah, dan manis lurus ke atas dan terbuka, jari kelingking dan jempol mengepal.', imagePrompt: 'BISINDO letter W, right hand index, middle, ring fingers up spread, front view', mnemonic: 'W seperti "Tiga" jari terbuka.' },
+  { id: 'X', instruction: 'Jari telunjuk menekuk ke belakang seperti kail, jari-jari lain mengepal.', imagePrompt: 'BISINDO letter X, right hand index finger bent like a hook, front view', mnemonic: 'X seperti "Kail" pancing.' },
+  { id: 'Y', instruction: 'Jempol dan kelingking lurus ke samping terbuka, jari telunjuk, tengah, manis mengepal ke dalam.', imagePrompt: 'BISINDO letter Y, right hand thumb and pinky extended outward, others folded, front view', mnemonic: 'Y seperti "Yay" semangat.' },
+  { id: 'Z', instruction: 'Jari telunjuk lurus ke atas, lalu gerakkan ke samping membentuk huruf Z di udara.', imagePrompt: 'BISINDO letter Z, right hand index finger drawing Z shape in air, front view', mnemonic: 'Z seperti "Zig-zag".' }
 ];
 
 const MODULES = [
